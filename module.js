@@ -45,53 +45,30 @@ M.block_massaction.init = function(Y, data) {
     var section_moveto   = document.getElementById('mod-massaction-control-section-list-moveto');
     var section_dupto    = document.getElementById('mod-massaction-control-section-list-dupto');
 
-    for (var section_number in sections) {
-        if (section_number == 0) {    // General/first section.
-            var section_text = M.util.get_string('section_zero', 'block_massaction');
-        } else {
-            // Find the section name.
-            var sectionname_node = Y.one('#section-' + section_number + ' h3.sectionname');
-
-            if (sectionname_node != null) {
-                var section_text = sectionname_node.get('text');
-            } else if (Y.one('div.single-section')) { // Check for single section view.
-                var section_text = Y.one('div.single-section h3.sectionname').get('text');
-            } else {
-                // Determine the option text depending on course format.
-                switch (data.course_format) {
-                    case 'weeks':
-                         var section_text = M.util.get_string('week', 'block_massaction') + ' ' + section_number;
-                         break;
-
-                    case 'topics':
-                         var section_text = M.util.get_string('topic', 'block_massaction') + ' ' + section_number;
-                         break;
-
-                    default:
-                         var section_text = M.util.get_string('section', 'block_massaction') + ' ' + section_number;
-                         break;
-                }
-            }
+    // add to move-to-section
+    var section_names = [];
+    var move_sections = Y.all('li.type_structure a');
+    move_sections.each(function(node) {
+        var link = node.get('href');
+        var section = /section=([0-9]+)/.exec(link);
+        if(!section) {
+            return;
         }
+        section_names[section[1]] = node.get('text');
+        var section_option = document.createElement('option');
+        section_option.text = node.get('text');
+        section_option.value = section[1]; // This is the first captured group, which is the section number
+        section_moveto.options[section_moveto.options.length] = section_option;
+    });
 
-        // Add to section selector.
+       
+    for (var section_number in sections) {
+        // add to section selector
         var section_option      = document.createElement('option');
-        section_option.text     = section_text;
+        section_option.text     = section_names[section_number];
         section_option.value    = section_number;
         section_option.disabled = sections[section_number].length == 0; //If has no module to select.
         section_selector.options[section_selector.options.length] = section_option;
-
-        // Add to move-to-section.
-        var section_option      = document.createElement('option');
-        section_option.text     = section_text;
-        section_option.value    = section_number;
-        section_moveto.options[section_moveto.options.length] = section_option;
-
-        // Add to dup-to-section.
-        var section_option      = document.createElement('option');
-        section_option.text     = section_text;
-        section_option.value    = section_number;
-        section_dupto.options[section_dupto.options.length] = section_option;
     }
 
     // Attach event handler for the controls.
