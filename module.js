@@ -45,49 +45,30 @@ M.block_massaction.init = function(Y, data) {
     var section_selector = document.getElementById('mod-massaction-control-section-list-select');
     var section_moveto   = document.getElementById('mod-massaction-control-section-list-moveto');
 
+    // add to move-to-section
+    var section_names = [];
+    var move_sections = Y.all('li.type_structure a');
+    move_sections.each(function(node) {
+        var link = node.get('href');
+        var section = /section=([0-9]+)/.exec(link);
+        if(!section) {
+            return;
+        }
+        section_names[section[1]] = node.get('text');
+        var section_option = document.createElement('option');
+        section_option.text = node.get('text');
+        section_option.value = section[1]; // This is the first captured group, which is the section number
+        section_moveto.options[section_moveto.options.length] = section_option;
+    });
+
     for (var section_number in sections) {
-        if (section_number == 0) {    // general/first section
-            var section_text = M.util.get_string('section_zero', 'block_massaction');
-        }
-        else {
-            // find the section name
-            var sectionname_node = Y.one('#section-' + section_number + ' h3.sectionname');
-
-            if (sectionname_node != null) {
-                var section_text = sectionname_node.get('text');
-            }
-            else {
-
-                // determine the option text depending on course format
-                switch (data.course_format) {
-                    case 'weeks':
-                         var section_text = M.util.get_string('week', 'block_massaction') + ' ' + section_number;
-                         break;
-
-                    case 'topics':
-                         var section_text = M.util.get_string('topic', 'block_massaction') + ' ' + section_number;
-                         break;
-
-                    default:
-                         var section_text = M.util.get_string('section', 'block_massaction') + ' ' + section_number;
-                         break;
-                }
-            }
-        }
-
-
         // add to section selector
         var section_option      = document.createElement('option');
-        section_option.text     = section_text;
+        section_option.text     = section_names[section_number];
         section_option.value    = section_number;
         section_option.disabled = sections[section_number].length == 0; // if has no module to select
         section_selector.options[section_selector.options.length] = section_option;
 
-        // add to move-to-section
-        var section_option      = document.createElement('option');
-        section_option.text     = section_text;
-        section_option.value    = section_number;
-        section_moveto.options[section_moveto.options.length] = section_option;
     }
 
     // attach event handler for the controls

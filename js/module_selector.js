@@ -47,11 +47,11 @@ var module_selector = function() {
 module_selector.prototype.add_checkboxes = function() {
     var self = this;
 
-    var section_number   = 0;
-    var section = Y.one('#section-0');
-
-    while (section) {
+    var sections = Y.all('.main');
+    sections.each(function(section) {
         // add the section to the registry
+        // Gets the first captured group, which is the section number
+        var section_number = /section-([0-9]+)/.exec(section.get('id'))[1];
         self.sections[section_number] = [];
 
         // find all LI with class 'activity' or 'resource'
@@ -67,10 +67,7 @@ module_selector.prototype.add_checkboxes = function() {
 
             self.add_module_checkbox(section_number, module_el);
         });
-
-        section_number++;  // advance the loop
-        section = Y.one('#section-' + section_number);
-    }
+    });
 };
 
 
