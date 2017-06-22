@@ -103,19 +103,38 @@ M.block_massaction.init = function(Y, data) {
             section_option.disabled = sections[section_number].modules.length === 0; // If has no module to select.
             section_selector.options[section_selector.options.length] = section_option;
         }
-
-        // Add to move-to-section.
-        section_option          = document.createElement('option');
-        section_option.text     = section_text;
-        section_option.value    = section_number;
-        section_moveto.options[section_moveto.options.length] = section_option;
-
-        // Add to dup-to-section.
-        section_option          = document.createElement('option');
-        section_option.text     = section_text;
-        section_option.value    = section_number;
-        section_dupto.options[section_dupto.options.length] = section_option;
     }
+
+    // Add to move-to-section.
+    var section_names = [];
+    var move_sections = Y.all('li.type_structure a');
+    move_sections.each(function(node) {
+        var link = node.get('href');
+        var section = /section=([0-9]+)/.exec(link);
+        if (!section) {
+            return;
+        }
+        section_names[section[1]] = node.get('text');
+        var section_option = document.createElement('option');
+        section_option.text = node.get('text');
+        section_option.value = section[1]; // This is the first captured group, which is the section number
+        section_moveto.options[section_moveto.options.length] = section_option;
+    });
+
+    // Add to dup-to-section.
+    var dup_sections = Y.all('li.type_structure a');
+    dup_sections.each(function(node) {
+        var link = node.get('href');
+        var section = /section=([0-9]+)/.exec(link);
+        if (!section) {
+            return;
+        }
+        section_names[section[1]] = node.get('text');
+        var section_option = document.createElement('option');
+        section_option.text = node.get('text');
+        section_option.value = section[1]; // This is the first captured group, which is the section number
+        section_dupto.options[section_dupto.options.length] = section_option;
+    });
 
     // Attach event handler for the controls.
     Y.on('change', function() { self.set_section_selection(true); },

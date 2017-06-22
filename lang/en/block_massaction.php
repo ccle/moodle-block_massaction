@@ -42,7 +42,7 @@ $string['action_duptosection'] = 'Duplicate to section';
 $string['week'] = 'W';
 $string['topic'] = 'Topic';
 $string['section'] = 'Topic';
-$string['section_zero'] = 'General';
+$string['section_zero'] = 'Site info';
 $string['selecttarget'] = 'Please select a target section to move items to';
 $string['noitemselected'] = 'Please select at least one item to apply the mass-action';
 
